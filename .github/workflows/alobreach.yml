@@ -1,0 +1,57 @@
+# Alobreach: fixes critical dependency CVEs in this repository's CI and proves nothing broke.
+# Started by the Alobreach GitHub App (repository_dispatch) for one Dependabot alert at a time.
+# It never deploys and never merges: it opens a pull request on an alobreach/* branch for you to review.
+name: alobreach
+
+on:
+  repository_dispatch:
+    types: [alobreach-fix]
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: Alobreach job id
+        required: true
+
+permissions:
+  contents: write  # push the fix branch (alobreach/* only)
+  pull-requests: write  # open the fix pull request
+  id-token: write  # OIDC token proving this workflow to the Alobreach brain
+
+concurrency:
+  group: alobreach-${{ github.event.client_payload.job_id || inputs.job_id }}
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      JOB_ID: ${{ github.event.client_payload.job_id || inputs.job_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Alobreach runner 0.1.0-jdk11
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          # Optional: enables model-assisted adaptation when a plain version bump breaks the build.
+          ALOBREACH_MODEL_KEY: ${{ secrets.ALOBREACH_MODEL_KEY }}
+        run: |
+          [[ "$JOB_ID" =~ ^job_[0-9a-f]{24}$ ]] || { echo "invalid job id"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/alobreach" && chmod -R a+rwX "$GITHUB_WORKSPACE" "$RUNNER_TEMP/alobreach"
+          docker run --rm \
+            -e GITHUB_TOKEN -e ALOBREACH_MODEL_KEY -e GITHUB_ACTIONS -e GITHUB_REPOSITORY -e GITHUB_SHA \
+            -e GITHUB_RUN_ID -e GITHUB_SERVER_URL -e ACTIONS_ID_TOKEN_REQUEST_URL -e ACTIONS_ID_TOKEN_REQUEST_TOKEN \
+            -e ALOBREACH_IMAGE_DIGEST=sha256:a6ccdc3b5c691e6fde49a881633c2ca9e13e3cc75fce38d5ff9d858d56468057 \
+            -v "$GITHUB_WORKSPACE:/work" -v "$RUNNER_TEMP/alobreach:/out" \
+            ghcr.io/jeanm3ry/alobreach-runner@sha256:a6ccdc3b5c691e6fde49a881633c2ca9e13e3cc75fce38d5ff9d858d56468057 \
+            run --job-id "$JOB_ID" --repo-slug "$GITHUB_REPOSITORY" --brain-url https://brain-production-1ddf.up.railway.app --repo /work --out /out
+      - name: Job summary
+        if: always()
+        run: cat "$RUNNER_TEMP/alobreach/report.md" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        if: always()
+        with:
+          name: alobreach-${{ env.JOB_ID }}
+          path: ${{ runner.temp }}/alobreach
+          retention-days: 14
