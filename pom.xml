@@ -632,6 +632,14 @@
     sub-modules will not introduce these dependencies by default -->
     <dependencyManagement>
         <dependencies>
+            <!-- alobreach: CVE-2026-47884 fix, override org.springframework:spring-webmvc to 7.0.9 -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>7.0.9</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
