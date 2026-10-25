@@ -31,7 +31,7 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - name: Alobreach runner 0.3.0-jdk11
+      - name: Alobreach runner 0.4.0-jdk11
         env:
           GITHUB_TOKEN: ${{ github.token }}
           # Optional: enables model-assisted adaptation when a plain version bump breaks the build.
@@ -42,9 +42,9 @@ jobs:
           docker run --rm \
             -e GITHUB_TOKEN -e ALOBREACH_MODEL_KEY -e GITHUB_ACTIONS -e GITHUB_REPOSITORY -e GITHUB_SHA \
             -e GITHUB_RUN_ID -e GITHUB_SERVER_URL -e ACTIONS_ID_TOKEN_REQUEST_URL -e ACTIONS_ID_TOKEN_REQUEST_TOKEN \
-            -e ALOBREACH_IMAGE_DIGEST=sha256:d868fc1d6931eccc620ba34ada17bad355fc37654d963af9533fb6a1cfcb66ba \
+            -e ALOBREACH_IMAGE_DIGEST=sha256:2f3bf56c901e6fa677d1f58e93d6f825b901f95ca6f409cdb9203611c253e851 \
             -v "$GITHUB_WORKSPACE:/work" -v "$RUNNER_TEMP/alobreach:/out" \
-            ghcr.io/jeanm3ry/alobreach-runner@sha256:d868fc1d6931eccc620ba34ada17bad355fc37654d963af9533fb6a1cfcb66ba \
+            ghcr.io/jeanm3ry/alobreach-runner@sha256:2f3bf56c901e6fa677d1f58e93d6f825b901f95ca6f409cdb9203611c253e851 \
             run --job-id "$JOB_ID" --repo-slug "$GITHUB_REPOSITORY" --brain-url https://brain-production-1ddf.up.railway.app --repo /work --out /out
       - name: Job summary
         if: always()
