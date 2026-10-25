@@ -1,0 +1,13 @@
+# Alobreach configuration: https://alobreach.com (every key is optional).
+# Detected 8 (maven.compiler.target=${java.version} in pom.xml).
+ecosystem: maven
+# Behaviour capture starts the service and replays read-only requests before and after the fix.
+capture:
+  enabled: true
+# Model-assisted adaptation, used only when the plain version bump breaks the build or tests.
+# Add the ALOBREACH_MODEL_KEY repository secret to enable it.
+model:
+  provider: anthropic
+  model: claude-opus-5-5
+# Opt-in: send the anonymised outcome (counts and statuses, never code or paths) to Alobreach.
+share_outcomes: false
