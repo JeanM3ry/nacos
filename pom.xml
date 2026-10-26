@@ -632,6 +632,24 @@
     sub-modules will not introduce these dependencies by default -->
     <dependencyManagement>
         <dependencies>
+            <!-- alobreach: CVE-2026-68525 fix, override org.apache.tomcat.embed:tomcat-embed-core to 9.0.121 -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>9.0.121</version>
+            </dependency>
+            <!-- alobreach: CVE-2026-68525 fix, override org.apache.tomcat.embed:tomcat-embed-core to 9.0.121 -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>9.0.121</version>
+            </dependency>
+            <!-- alobreach: CVE-2026-68525 fix, override org.apache.tomcat.embed:tomcat-embed-core to 9.0.121 -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>9.0.121</version>
+            </dependency>
             <dependency>
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
