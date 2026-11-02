@@ -23,6 +23,8 @@ import com.alibaba.nacos.config.server.model.ConfigMetadata;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -72,12 +74,16 @@ public class YamlParserUtil {
         public static Tag configMetadataTag = new Tag(ConfigMetadata.class);
         
         public YamlParserConstructor() {
-            super();
+            super(new LoaderOptions());
             yamlConstructors.put(configMetadataTag, new ConstructYamlConfigMetadata());
         }
     }
     
     public static class CustomRepresenter extends Representer {
+        
+        public CustomRepresenter() {
+            super(new DumperOptions());
+        }
         
         @Override
         protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue,
